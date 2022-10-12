@@ -2,6 +2,7 @@ package io.tripled.example.rest;
 
 
 import io.tripled.example.api.PlaceOrderAPI;
+import io.tripled.example.api.PlaceOrderCommand;
 import io.tripled.example.vocabulary.Amount;
 import io.tripled.example.vocabulary.Name;
 import io.tripled.example.vocabulary.ShoeSize;
@@ -22,16 +23,25 @@ public class RestController {
     //@PostMapping("/PlaceOrder")
     String placeOrder(PlaceOrderRequest request) {
 
-        // We map the data request, specific to this adapter, to our internal, well-known domain primitives.
-        final Name name = name(request.getName());
-        final ShoeSize shoeSize = shoeSize(request.getSize());
-        final Amount amount = amount(request.getAmount());
+        // We map the data request, specific to this adapter
+        final PlaceOrderCommand placeOrderCommand = buildPlaceOrderCommand(request);
 
         //We invoke the API, which is blissfully unaware of any concrete adapter details
-        applicationApi.placeOrder(name,shoeSize,amount);
+        applicationApi.placeOrder(placeOrderCommand);
 
         // Let's answer this questions next..
         return "messages";
+    }
+
+    private PlaceOrderCommand buildPlaceOrderCommand(PlaceOrderRequest request) {
+        final Name name = name(request.getName());
+        final ShoeSize shoeSize = shoeSize(request.getSize());
+        final Amount amount = amount(request.getAmount());
+        return PlaceOrderCommand.newBuilder()
+                .withAmount(amount)
+                .withName(name)
+                .withShoeSize(shoeSize)
+                .build();
     }
 }
 
