@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.tripled</groupId>
+        <artifactId>validation-example-code-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>        
+    </parent>
+    <packaging>pom</packaging>
+    <name>application</name>
+    <artifactId>validation-example-application-parent</artifactId>
+
+    <description>The module contains all the application logic code from the hexagonal architecture </description>
+
+    <modules>
+        <module>application-api</module>        
+        <module>domain</module>
+        <module>use-cases</module>
+    </modules>
+  
+</project>

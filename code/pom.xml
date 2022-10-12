@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.tripled</groupId>
+        <artifactId>validation-example-root-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>        
+    </parent>
+    <packaging>pom</packaging>
+    <name>code</name>
+    <artifactId>validation-example-code-parent</artifactId>
+
+    <description>The module contains all the code</description>
+
+    <modules>
+        <module>application</module>
+        <module>infra</module>
+        <module>main</module>
+    </modules>
+  
+</project>
