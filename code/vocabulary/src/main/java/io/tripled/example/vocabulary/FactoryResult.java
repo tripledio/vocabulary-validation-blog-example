@@ -3,6 +3,7 @@ package io.tripled.example.vocabulary;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class FactoryResult<T> {
@@ -45,9 +46,17 @@ public class FactoryResult<T> {
         }
     }
 
-    public void onFailure(Consumer<List<String>> errorHandler) {
+    public void onFailure(Consumer<ValidationResult> errorHandler) {
         if (hasNoValidInstance()) {
-            errorHandler.accept(validationResult.messages);
+            errorHandler.accept(validationResult);
+        }
+    }
+
+    public <R> R process(Function<T, R> happyPathFunction, Function<ValidationResult, R> errorHandler) {
+        if (hasValidInstance()) {
+            return happyPathFunction.apply(createdInstance);
+        } else {
+            return errorHandler.apply(validationResult);
         }
     }
 
