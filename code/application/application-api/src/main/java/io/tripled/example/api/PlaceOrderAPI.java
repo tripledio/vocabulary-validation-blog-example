@@ -1,7 +1,10 @@
 package io.tripled.example.api;
 
-public interface PlaceOrderAPI {
+import io.tripled.example.vocabulary.Amount;
+import io.tripled.example.vocabulary.Name;
+import io.tripled.example.vocabulary.ShoeSize;
 
-    void placeOrder(String name, String shoeSize, Integer amount);
+public interface PlaceOrderAPI {
+    void placeOrder(Name name, ShoeSize shoeSize, Amount amount);
 }
 

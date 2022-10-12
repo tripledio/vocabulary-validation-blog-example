@@ -1,6 +1,13 @@
 package io.tripled.example.console;
 
 import io.tripled.example.api.PlaceOrderAPI;
+import io.tripled.example.vocabulary.Amount;
+import io.tripled.example.vocabulary.Name;
+import io.tripled.example.vocabulary.ShoeSize;
+
+import static io.tripled.example.vocabulary.Amount.amount;
+import static io.tripled.example.vocabulary.Name.name;
+import static io.tripled.example.vocabulary.ShoeSize.shoeSize;
 
 public class ConsoleAdapter {
 
@@ -11,17 +18,16 @@ public class ConsoleAdapter {
     }
 
     String placeOrder(String orderLine) {
-        // Do we validate before we invoke the application api?
         final String[] split = orderLine.split("\\s");
-        final String name = split[0];
-        final Integer amount = Integer.parseInt(split[1]);
-        final String size = split[1];
+
+        // We map the data request, specific to this adapter, to our internal, well-known domain primitives.
+        final Name name = name(split[0]);
+        final Amount amount = amount(Integer.parseInt(split[1]));
+        final ShoeSize size = shoeSize(split[1]);
 
         applicationApi.placeOrder(name, size, amount);
 
-        // or is the implementation of PlaceOrderAPI responsible for this
-
-        // And how do we capture and report potential validation errors?
+        // Lets tackle this next
         return "Success";
     }
 }

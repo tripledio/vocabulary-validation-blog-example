@@ -2,6 +2,13 @@ package io.tripled.example.rest;
 
 
 import io.tripled.example.api.PlaceOrderAPI;
+import io.tripled.example.vocabulary.Amount;
+import io.tripled.example.vocabulary.Name;
+import io.tripled.example.vocabulary.ShoeSize;
+
+import static io.tripled.example.vocabulary.Amount.amount;
+import static io.tripled.example.vocabulary.Name.name;
+import static io.tripled.example.vocabulary.ShoeSize.shoeSize;
 
 public class RestController {
 
@@ -11,17 +18,20 @@ public class RestController {
         this.applicationApi = applicationApi;
     }
 
-    //Annotated for whatever framwwork you prefer
+    //Annotated for whatever framework you prefer
     //@PostMapping("/PlaceOrder")
     String placeOrder(PlaceOrderRequest request) {
 
-        // Do we validate before we invoke the application api?
-        applicationApi.placeOrder(request.getName(), request.getSize(), request.getAmount());
+        // We map the data request, specific to this adapter, to our internal, well-known domain primitives.
+        final Name name = name(request.getName());
+        final ShoeSize shoeSize = shoeSize(request.getSize());
+        final Amount amount = amount(request.getAmount());
 
-        // or is the implementation of PlaceOrderAPI resposible for this
+        //We invoke the API, which is blissfully unaware of any concrete adapter details
+        applicationApi.placeOrder(name,shoeSize,amount);
 
-        // And how do we capture and report potential validation errors?
-        return "Success";
+        // Let's answer this questions next..
+        return "messages";
     }
 }
 

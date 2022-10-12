@@ -16,6 +16,7 @@
         <module>application</module>
         <module>infra</module>
         <module>main</module>
+        <module>vocabulary</module>
     </modules>
   
 </project>

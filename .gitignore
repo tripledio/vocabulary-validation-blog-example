@@ -5,5 +5,3 @@ target/
 *.iml
 
 *.class
-
-.java-version
