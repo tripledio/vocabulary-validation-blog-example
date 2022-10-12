@@ -6,5 +6,6 @@ import io.tripled.example.vocabulary.ShoeSize;
 
 public interface PlaceOrderAPI {
     void placeOrder(Name name, ShoeSize shoeSize, Amount amount);
+
 }
 

@@ -6,24 +6,34 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.jupiter.api.Assertions.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.fail;
+
 class NameTest {
     @Test
     void success() {
-        final Name name = Name.name(buildText(5));
+        final FactoryResult<Name> positiveNumber = Name.name(buildText(5));
 
-        assertEquals("aaaaa", name.value);
-    }
-
-    @Test
-    void equals() {
-        final Name name = Name.name(buildText(5));
-
-        assertEquals(name, Name.name(buildText(5)));
+        positiveNumber.onSuccess(NameTest::isValidText);
+        positiveNumber.onFailure(NameTest::failTheTest);
     }
 
     @Test
     void nullIsNotAllowed() {
-        assertThrows(RuntimeException.class, () -> Name.name(null));
+        final FactoryResult<Name> negativeNumber = Name.name(null);
+
+        negativeNumber.onFailure(NameTest::hasValidationErrorForNull);
+        negativeNumber.onSuccess(NameTest::failTheTest);
+    }
+
+    @Test
+    void textIsLimitedInSize() {
+        final FactoryResult<Name> negativeNumber = Name.name(buildText(200));
+
+        negativeNumber.onFailure(NameTest::hasValidationErrorForLength);
+        negativeNumber.onSuccess(NameTest::failTheTest);
     }
 
     private static void hasValidationErrorForLength(ValidationResult x) {

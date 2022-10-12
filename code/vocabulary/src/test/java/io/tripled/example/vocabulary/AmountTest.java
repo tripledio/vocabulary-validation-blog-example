@@ -2,8 +2,12 @@ package io.tripled.example.vocabulary;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static io.tripled.example.vocabulary.Amount.amount;
+import static io.tripled.example.vocabulary.Amount.mandatoryAmount;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.contains;
@@ -11,51 +15,59 @@ import static org.hamcrest.Matchers.contains;
 class AmountTest {
 
     @Test
-    void happyPath() {
-        final Amount positiveNumber = amount(42);
+    void success() {
+        final FactoryResult<Amount> positiveNumber = Amount.amount(42);
 
-        assertThat(positiveNumber.value, equalTo(42));
-    }
-
-    @Test
-    void equals() {
-        final Amount positiveNumber = amount(42);
-
-        assertEquals(positiveNumber, amount(42));
+        positiveNumber.onSuccess(AmountTest::isFortytwo);
+        positiveNumber.onFailure(AmountTest::failTheTest);
     }
 
     @Test
     void zeroIsAllowed() {
-        final Amount positiveNumber = amount(0);
+        final FactoryResult<Amount> positiveNumber = Amount.amount(0);
 
-        assertThat(positiveNumber.value, equalTo(0));
+        positiveNumber.onSuccess(AmountTest::isZero);
+        positiveNumber.onFailure(AmountTest::failTheTest);
     }
 
     @Test
     void notNegative() {
-        assertThrows(RuntimeException.class, () -> amount(-666));
+        final FactoryResult<Amount> negativeNumber = Amount.amount(-666);
+
+        negativeNumber.onFailure(AmountTest::hasValidationErrorsForNegativeValue);
+        negativeNumber.onSuccess(AmountTest::failTheTest);
     }
 
     @Test
     void smallerThan1000() {
-        assertThrows(RuntimeException.class, () -> amount(1244));
+        final FactoryResult<Amount> negativeNumber = Amount.amount(1234);
+
+        negativeNumber.onFailure(AmountTest::hasValidationErrorsForTooLarge);
+        negativeNumber.onSuccess(AmountTest::failTheTest);
     }
 
     @Test
     void sumOfAmounts() {
-        final Amount sum = amount(41).plus(Amount.ONE);
+        final FactoryResult<Amount> sum = mandatoryAmount(41).plus(Amount.ONE);
 
-        assertThat(sum.value, equalTo(42));
+        sum.onSuccess(AmountTest::isFortytwo);
+        sum.onFailure(AmountTest::failTheTest);
     }
 
     @Test
     void sumsAreValidated() {
-        assertThrows(RuntimeException.class, () -> amount(999).plus(amount(235)));
+        final FactoryResult<Amount> sum = mandatoryAmount(999).plus(mandatoryAmount(235));
+
+        sum.onFailure(AmountTest::hasValidationErrorsForSumTooLarge);
+        sum.onSuccess(AmountTest::failTheTest);
     }
 
     @Test
-    void subtractionsAreValidated() {
-        assertThrows(RuntimeException.class, () -> Amount.ONE.minus(amount(2)));
+    void detractionsAreValidated() {
+        final FactoryResult<Amount> sum = Amount.ONE.minus(mandatoryAmount(2));
+
+        sum.onFailure(AmountTest::hasValidationErrorsForDetractionsTooSmall);
+        sum.onSuccess(AmountTest::failTheTest);
     }
 
 

@@ -6,8 +6,8 @@ import java.util.Objects;
 public class Amount {
     private static final int MAX = 1000;
     private static final int MIN = 0;
-    public static Amount ZERO = Amount.amount(MIN);
-    public static Amount ONE = Amount.amount(1);
+    public static Amount ZERO = Amount.mandatoryAmount(MIN);
+    public static Amount ONE = Amount.mandatoryAmount(1);
 
     public int value;
 
@@ -15,10 +15,22 @@ public class Amount {
         this.value = value;
     }
 
-    public static Amount amount(int value) {
-        if (isAmountTooSmall(value)) throw new RuntimeException("The amount [" + value + "] must be a larger than " + MIN);
-        if (isAmountTooLarge(value)) throw new RuntimeException("The amount [" + value + "] must be smaller than " + MAX);
-        return new Amount(value);
+    public static FactoryResult<Amount> amount(int amount) {
+        final ValidationResult validationResult = validate(amount);
+        return FactoryResult.createIfValid(validationResult, () -> new Amount(amount));
+    }
+
+    public static FactoryResult<Amount> amount(String value) {
+        try {
+            final int amountNumber = Integer.parseInt(value);
+            return amount(amountNumber);
+        } catch (NumberFormatException ex) {
+            return FactoryResult.failure(value + " is not a valid Integer");
+        }
+    }
+
+    public static Amount mandatoryAmount(int i) {
+        return amount(i).mandatoryValidInstance();
     }
 
 
@@ -39,15 +51,15 @@ public class Amount {
         return value < x.value;
     }
 
-    public Amount plus(Amount x) {
+    public FactoryResult<Amount> plus(Amount x) {
         final int sum = this.value + x.value;
-        if (isAmountTooLarge(sum)) throw new RuntimeException("[" + this.value + " plus " + x.value + "] must be smaller than " + MAX);
+        if (isAmountTooLarge(sum)) return FactoryResult.failure("[" + this.value + " plus " + x.value + "] must be smaller than " + MAX);
         else return Amount.amount(sum);
     }
 
-    public Amount minus(Amount x) {
+    public FactoryResult<Amount> minus(Amount x) {
         final int value = this.value - x.value;
-        if (isAmountTooSmall(value)) throw new RuntimeException("[" + this.value + " minus " + x.value + "] must be larger than " + MIN);
+        if (isAmountTooSmall(value)) return FactoryResult.failure("[" + this.value + " minus " + x.value + "] must be larger than " + MIN);
         else return Amount.amount(value);
     }
 
@@ -62,6 +74,12 @@ public class Amount {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    private static ValidationResult validate(int value) {
+        if (isAmountTooSmall(value)) return ValidationResult.create("The amount [" + value + "] must be a larger than " + MIN);
+        if (isAmountTooLarge(value)) return ValidationResult.create("The amount [" + value + "] must be smaller than " + MAX);
+        else return ValidationResult.EMPTY;
     }
 
     private static boolean isAmountTooSmall(int value) {
