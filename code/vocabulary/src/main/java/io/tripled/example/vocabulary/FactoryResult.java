@@ -14,7 +14,7 @@ public class FactoryResult<T> {
     private FactoryResult(T createdInstance, ValidationResult validationResult) {
         if (createdInstance != null && validationResult != null) throw new RuntimeException("A factoryResult may not have a createdInstance and errorMessages");
         if (createdInstance == null && ((validationResult == null) || validationResult.isEmpty()))
-            throw new RuntimeException("A factoryResult must have a createdInstance or and errorMessages");
+            throw new RuntimeException("A factoryResult must have a createdInstance or errorMessages");
         this.createdInstance = createdInstance;
         this.validationResult = (validationResult == null) ? ValidationResult.EMPTY : validationResult;
     }

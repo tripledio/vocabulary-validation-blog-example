@@ -3,6 +3,10 @@ package io.tripled.example.vocabulary;
 
 import java.util.Objects;
 
+import static io.tripled.example.vocabulary.FactoryResult.createIfValid;
+import static io.tripled.example.vocabulary.FactoryResult.failure;
+import static io.tripled.example.vocabulary.ValidationResult.create;
+
 public class Amount {
     private static final int MAX = 1000;
     private static final int MIN = 0;
@@ -17,7 +21,7 @@ public class Amount {
 
     public static FactoryResult<Amount> amount(int amount) {
         final ValidationResult validationResult = validate(amount);
-        return FactoryResult.createIfValid(validationResult, () -> new Amount(amount));
+        return createIfValid(validationResult, () -> new Amount(amount));
     }
 
     public static FactoryResult<Amount> amount(String value) {
@@ -25,7 +29,7 @@ public class Amount {
             final int amountNumber = Integer.parseInt(value);
             return amount(amountNumber);
         } catch (NumberFormatException ex) {
-            return FactoryResult.failure(value + " is not a valid Integer");
+            return failure(value + " is not a valid Integer");
         }
     }
 
@@ -53,13 +57,13 @@ public class Amount {
 
     public FactoryResult<Amount> plus(Amount x) {
         final int sum = this.value + x.value;
-        if (isAmountTooLarge(sum)) return FactoryResult.failure("[" + this.value + " plus " + x.value + "] must be smaller than " + MAX);
+        if (isAmountTooLarge(sum)) return failure("[" + this.value + " plus " + x.value + "] must be smaller than " + MAX);
         else return Amount.amount(sum);
     }
 
     public FactoryResult<Amount> minus(Amount x) {
         final int value = this.value - x.value;
-        if (isAmountTooSmall(value)) return FactoryResult.failure("[" + this.value + " minus " + x.value + "] must be larger than " + MIN);
+        if (isAmountTooSmall(value)) return failure("[" + this.value + " minus " + x.value + "] must be larger than " + MIN);
         else return Amount.amount(value);
     }
 
@@ -77,8 +81,8 @@ public class Amount {
     }
 
     private static ValidationResult validate(int value) {
-        if (isAmountTooSmall(value)) return ValidationResult.create("The amount [" + value + "] must be a larger than " + MIN);
-        if (isAmountTooLarge(value)) return ValidationResult.create("The amount [" + value + "] must be smaller than " + MAX);
+        if (isAmountTooSmall(value)) return create("The amount [" + value + "] must be a larger than " + MIN);
+        if (isAmountTooLarge(value)) return create("The amount [" + value + "] must be smaller than " + MAX);
         else return ValidationResult.EMPTY;
     }
 

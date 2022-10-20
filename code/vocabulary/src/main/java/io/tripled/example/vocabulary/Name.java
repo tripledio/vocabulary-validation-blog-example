@@ -3,6 +3,7 @@ package io.tripled.example.vocabulary;
 import java.util.Objects;
 
 import static io.tripled.example.vocabulary.FactoryResult.failure;
+import static io.tripled.example.vocabulary.FactoryResult.success;
 
 
 public class Name {
@@ -20,7 +21,7 @@ public class Name {
         if (value.isBlank()) return failure("Name value may not be blank");
         if (value.length() > MAX_LENGTH) return failure("Name length may not be larger than " + MAX_LENGTH + ". [" + value.substring(0, 20) + "]");
         if (value.length() < MIN_LENGTH) return failure("Name length may not be smaller than " + MIN_LENGTH + ". [" + value + "]");
-        return FactoryResult.success(new Name(value));
+        return success(new Name(value));
     }
 
 
